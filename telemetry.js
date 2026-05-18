@@ -9,17 +9,29 @@
 
     const telemetryData = {
         appId: 'RC251-UTM-PORTFOLIO',
+
         timestamp: new Date().toISOString(),
 
         environment: {
-            screenResolution: `${window.screen.width}x${window.screen.height}`,
-            viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-            devicePixelRatio: window.devicePixelRatio,
-            hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
-            deviceMemory: navigator.deviceMemory || 'N/A',
-            networkType: navigator.connection
-                ? navigator.connection.effectiveType
-                : 'unknown'
+            screenResolution:
+                `${window.screen.width}x${window.screen.height}`,
+
+            viewportSize:
+                `${window.innerWidth}x${window.innerHeight}`,
+
+            devicePixelRatio:
+                window.devicePixelRatio,
+
+            hardwareConcurrency:
+                navigator.hardwareConcurrency || 'N/A',
+
+            deviceMemory:
+                navigator.deviceMemory || 'N/A',
+
+            networkType:
+                navigator.connection
+                    ? navigator.connection.effectiveType
+                    : 'unknown'
         },
 
         performanceMetrics: {},
@@ -30,56 +42,73 @@
     // Colectare metrici performanță
     function collectPerformanceMetrics() {
 
-        if (!window.performance || !window.performance.getEntriesByType) {
+        if (
+            !window.performance ||
+            !window.performance.getEntriesByType
+        ) {
             return;
         }
 
-        const navEntries = performance.getEntriesByType('navigation');
+        const navEntries =
+            performance.getEntriesByType('navigation');
 
         if (navEntries.length > 0) {
 
             const timing = navEntries[0];
 
             telemetryData.performanceMetrics.dnsTime =
-                timing.domainLookupEnd - timing.domainLookupStart;
+                timing.domainLookupEnd -
+                timing.domainLookupStart;
 
             telemetryData.performanceMetrics.tcpHandshake =
-                timing.connectEnd - timing.connectStart;
+                timing.connectEnd -
+                timing.connectStart;
 
             telemetryData.performanceMetrics.ttfb =
-                timing.responseStart - timing.requestStart;
+                timing.responseStart -
+                timing.requestStart;
 
             telemetryData.performanceMetrics.domInteractive =
-                timing.domInteractive;
+                Math.round(timing.domInteractive);
 
             telemetryData.performanceMetrics.loadEvent =
-                timing.loadEventEnd - timing.loadEventStart;
+                Math.round(
+                    timing.loadEventEnd -
+                    timing.loadEventStart
+                );
         }
 
-        // Paint Metrics
-        const paintEntries = performance.getEntriesByType('paint');
+        // Paint metrics
+        const paintEntries =
+            performance.getEntriesByType('paint');
 
         paintEntries.forEach((entry) => {
 
             if (entry.name === 'first-paint') {
-                telemetryData.performanceMetrics.firstPaint = entry.startTime;
+
+                telemetryData.performanceMetrics.firstPaint =
+                    Math.round(entry.startTime);
             }
 
-            if (entry.name === 'first-contentful-paint') {
-                telemetryData.performanceMetrics.firstContentfulPaint = entry.startTime;
+            if (
+                entry.name ===
+                'first-contentful-paint'
+            ) {
+
+                telemetryData.performanceMetrics
+                    .firstContentfulPaint =
+                    Math.round(entry.startTime);
             }
         });
 
         dispatchTelemetry();
     }
 
-    // Beacon dispatch
+    // Simulare beacon GDPR-safe
     function dispatchTelemetry() {
 
-        const payload = JSON.stringify(telemetryData);
-
-        const endpoint =
-            'https://analytics.rc251.utm.md/api/telemetry';
+        const payload =
+            JSON.stringify(telemetryData);
 
         console.log(
             '%c[TELEMETRIE ACTIVE] JSON:',
@@ -87,26 +116,15 @@
             telemetryData
         );
 
-        if (navigator.sendBeacon) {
-
-            navigator.sendBeacon(endpoint, payload);
-
-        } else {
-
-            const xhr = new XMLHttpRequest();
-
-            xhr.open('POST', endpoint, true);
-
-            xhr.setRequestHeader(
-                'Content-Type',
-                'application/json'
-            );
-
-            xhr.send(payload);
-        }
+        // Simulare beacon fără request extern
+        console.log(
+            '%c[BEACON SIMULATED]',
+            'color:#00ff88;font-weight:bold;',
+            payload
+        );
     }
 
-    // Error Tracking
+    // Error tracking
     window.onerror = function (
         message,
         source,
@@ -119,13 +137,17 @@
             source,
             line: lineno,
             column: colno,
-            timestamp: new Date().toISOString()
+            timestamp:
+                new Date().toISOString()
         });
 
-        dispatchTelemetry();
+        console.warn(
+            '[Telemetry Error Captured]',
+            message
+        );
     };
 
-    // FID Estimation
+    // FID estimation
     let firstInteraction = false;
 
     document.addEventListener(
@@ -137,35 +159,52 @@
             firstInteraction = true;
 
             const delay =
-                performance.now() - event.timeStamp;
+                performance.now() -
+                event.timeStamp;
 
-            telemetryData.performanceMetrics.firstInputDelay =
-                delay;
+            telemetryData.performanceMetrics
+                .firstInputDelay =
+                Math.round(delay);
 
             console.log(
-                '[FID ESTIMATION]',
+                '%c[FID ESTIMATION]',
+                'color:#ffaa00;font-weight:bold;',
                 delay.toFixed(2) + 'ms'
             );
         },
         { passive: true }
     );
 
-    // requestIdleCallback optimization
+    // Optimizare Lighthouse
     function initTelemetry() {
 
-        setTimeout(collectPerformanceMetrics, 500);
+        setTimeout(
+            collectPerformanceMetrics,
+            300
+        );
     }
 
-    window.addEventListener('load', function () {
+    window.addEventListener(
+        'load',
+        function () {
 
-        if ('requestIdleCallback' in window) {
+            if (
+                'requestIdleCallback'
+                in window
+            ) {
 
-            requestIdleCallback(initTelemetry);
+                requestIdleCallback(
+                    initTelemetry
+                );
 
-        } else {
+            } else {
 
-            setTimeout(initTelemetry, 1000);
+                setTimeout(
+                    initTelemetry,
+                    1000
+                );
+            }
         }
-    });
+    );
 
 })();
