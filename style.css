@@ -1,0 +1,387 @@
+/* =========================================================
+   VARIABLES.CSS
+========================================================= */
+
+:root {
+
+/* Primitive Colors */
+--color-dark: #0f172a;
+--color-dark-light: #1e293b;
+--color-white: #ffffff;
+
+--color-blue: #38bdf8;
+--color-green: #22c55e;
+--color-red: #ef4444;
+--color-purple: #8b5cf6;
+--color-gray: #64748b;
+
+/* Semantic */
+--bg-primary: linear-gradient(135deg,#020617,#111827);
+--surface-primary: rgba(15,23,42,0.85);
+
+--text-primary: #f8fafc;
+--text-secondary: #94a3b8;
+
+--border-default: rgba(255,255,255,0.08);
+
+/* Shadows */
+--shadow-blue: 0 0 15px rgba(56,189,248,.45);
+--shadow-green: 0 0 15px rgba(34,197,94,.45);
+--shadow-red: 0 0 15px rgba(239,68,68,.45);
+
+/* Radius */
+--radius-lg: 22px;
+--radius-md: 14px;
+
+/* Timing */
+--transition-fast: .25s ease;
+--transition-smooth: .4s ease;
+
+}
+
+/* =========================================================
+   RESET / ATOMS.CSS
+========================================================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:var(--bg-primary);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:40px;
+color:var(--text-primary);
+overflow-x:hidden;
+}
+
+/* =========================================================
+   PERFORMANCE DEBUG MODE
+========================================================= */
+
+.body--debug *{
+outline:2px solid #8b5cf6;
+will-change:transform;
+}
+
+/* =========================================================
+   FORM BLOCK
+========================================================= */
+
+.form{
+width:100%;
+max-width:500px;
+padding:40px;
+border-radius:var(--radius-lg);
+background:var(--surface-primary);
+backdrop-filter:blur(16px);
+border:1px solid var(--border-default);
+
+display:flex;
+flex-direction:column;
+gap:28px;
+
+transition:
+transform var(--transition-smooth),
+filter var(--transition-smooth),
+border-color var(--transition-smooth);
+
+}
+
+/* Focus Within UX */
+
+.form:focus-within{
+filter:brightness(1.15);
+border-color:rgba(56,189,248,.35);
+transform:translateY(-4px);
+}
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.form__header{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.form__title{
+font-size:32px;
+font-weight:700;
+}
+
+.form__subtitle{
+color:var(--text-secondary);
+line-height:1.5;
+}
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form__group{
+position:relative;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.form__input{
+width:100%;
+padding:22px 18px 10px;
+border:none;
+outline:none;
+border-radius:var(--radius-md);
+
+background:rgba(255,255,255,.05);
+color:var(--text-primary);
+
+font-size:16px;
+
+border:1px solid transparent;
+
+transition:
+border-color var(--transition-fast),
+box-shadow var(--transition-fast),
+transform var(--transition-fast);
+
+}
+
+/* GPU FRIENDLY */
+
+.form__input:focus{
+transform:translateY(-2px);
+}
+
+/* Floating Labels */
+
+.form__label{
+position:absolute;
+left:18px;
+top:18px;
+
+font-size:15px;
+color:var(--text-secondary);
+
+pointer-events:none;
+
+transition:
+transform var(--transition-fast),
+font-size var(--transition-fast),
+color var(--transition-fast);
+
+}
+
+/* Placeholder hidden */
+
+.form__input::placeholder{
+opacity:0;
+}
+
+/* Floating animation */
+
+.form__input:focus + .form__label,
+.form__input:not(:placeholder-shown) + .form__label{
+
+transform:translateY(-12px);
+font-size:12px;
+color:var(--color-blue);
+
+}
+
+/* =========================================================
+   VALIDATION STATES
+========================================================= */
+
+/* Focus */
+
+.form__input:focus{
+border-color:var(--color-blue);
+box-shadow:var(--shadow-blue);
+}
+
+/* Valid */
+
+.form__input:valid{
+border-color:var(--color-green);
+box-shadow:var(--shadow-green);
+}
+
+/* Invalid */
+
+.form__input:invalid:not(:placeholder-shown){
+border-color:var(--color-red);
+box-shadow:var(--shadow-red);
+}
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.form__checkbox-group{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.form__checkbox{
+width:18px;
+height:18px;
+accent-color:var(--color-green);
+}
+
+.form__checkbox-label{
+font-size:14px;
+color:var(--text-secondary);
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.form__services{
+min-height:60px;
+padding:18px;
+border-radius:var(--radius-md);
+background:rgba(255,255,255,.03);
+border:1px dashed rgba(255,255,255,.1);
+}
+
+.form__services:empty::before{
+content:"Niciun serviciu selectat";
+color:var(--text-secondary);
+font-size:14px;
+}
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.form__submit-btn{
+padding:18px;
+border:none;
+border-radius:var(--radius-md);
+
+background:#334155;
+color:#94a3b8;
+
+font-size:16px;
+font-weight:700;
+
+cursor:not-allowed;
+
+pointer-events:none;
+
+transition:
+transform var(--transition-fast),
+background var(--transition-fast),
+box-shadow var(--transition-fast);
+
+}
+
+/* =========================================================
+   GATEKEEPER LOGIC
+========================================================= */
+
+.form:has(
+.form__name:valid
+):has(
+.form__email:valid
+):has(
+.form__password:valid
+):has(
+.form__checkbox:checked
+)
+.form__submit-btn{
+
+background:linear-gradient(
+135deg,
+var(--color-blue),
+var(--color-purple)
+);
+
+color:white;
+
+cursor:pointer;
+pointer-events:auto;
+
+animation:formPulse 1.6s infinite;
+
+}
+
+/* Complex Selector Puzzle */
+
+.form:has(.form__checkbox:checked)
+.form__submit-btn{
+border:1px solid rgba(255,255,255,.3);
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes formPulse{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.03);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+/* =========================================================
+   CRITICAL CSS NOTE
+========================================================= */
+
+/*
+ABOVE THE FOLD:
+- body
+- form
+- inputs
+- labels
+- button
+
+NON-CRITICAL:
+- animations
+- debug mode
+- empty states
+- advanced effects
+*/
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:600px){
+
+.form{
+padding:28px;
+}
+
+.form__title{
+font-size:26px;
+}
+
+}
+
+
+
+
